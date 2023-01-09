@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-01-09 00:54:43
  * @LastEditors: iuukai
- * @LastEditTime: 2023-01-09 17:08:24
+ * @LastEditTime: 2023-01-09 17:53:22
  * @FilePath: \api-test\index.html
  * @Description: 
  * @QQ/微信: 790331286
@@ -370,7 +370,7 @@
 
 						getReadMe()
 						async function getReadMe() {
-							const { data } = await axios.get('./README.md')
+							const { data } = await axios.get('./readme').then(res => res.data)
 							const wrap = document.createElement('div')
 							$(wrap).html(marked.parse(data).replaceAll('%{origin}%', state.origin))
 							state.codes = $(wrap)

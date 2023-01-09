@@ -2,11 +2,12 @@
  * @Author: iuukai
  * @Date: 2023-01-09 00:51:47
  * @LastEditors: iuukai
- * @LastEditTime: 2023-01-09 17:05:58
+ * @LastEditTime: 2023-01-09 17:51:13
  * @FilePath: \api-test\index.js
  * @Description:
  * @QQ/微信: 790331286
  */
+const fs = require('fs')
 const path = require('path')
 const axios = require('axios')
 const express = require('express')
@@ -20,6 +21,19 @@ app.use(express.static('./'))
 app.listen(port, host, () =>
 	console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
 )
+
+app.get('/readme', async (req, res) => {
+	try {
+		const content = await fs.readFileSync(path.join(__dirname, './README.md'), 'utf8')
+		res.status(200).send({ code: 200, data: content })
+	} catch (err) {
+		res.status(404).send({
+			code: 404,
+			data: null,
+			msg: 'Not Found'
+		})
+	}
+})
 
 app.use('/proxy/:url(*)', async (req, res) => {
 	try {
