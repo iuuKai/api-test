@@ -7,7 +7,7 @@
 ```js,ajax,demo,getList
 axios({
 	method: 'get',
-	url: '%{origin}%/api/ajax/getList',
+	url: '%{origin}%/api/ajax/user/getList',
 	params: {
 		name: '',
 		age: '',
@@ -53,7 +53,7 @@ axios({
 ```js,ajax,demo,getUser
 axios({
 	method: 'get',
-	url: '%{origin}%/api/ajax/getUser',
+	url: '%{origin}%/api/ajax/user/getUser',
 	params: {
 		id: '0cd22700f63a42e18d5829766d60bcb2'
 	}
@@ -79,7 +79,7 @@ axios({
 ```js,ajax,demo,searchList
 axios({
 	method: 'get',
-	url: '%{origin}%/api/ajax/searchList',
+	url: '%{origin}%/api/ajax/user/searchList',
 	params: {
 		value: '球'
 	}
@@ -115,7 +115,7 @@ axios({
 ```js,ajax,demo,addUser
 axios({
 	method: 'post',
-	url: '%{origin}%/api/ajax/addUser',
+	url: '%{origin}%/api/ajax/user/addUser',
 	params: {
 		name: '赵四',
 		age: 51,
@@ -143,7 +143,7 @@ axios({
 ```js,ajax,demo,updateUser
 axios({
 	method: 'put',
-	url: '%{origin}%/api/ajax/addUser',
+	url: '%{origin}%/api/ajax/user/addUser',
 	params: {
 		id: '0cd22700f63a42e18d5829766d60bcb2',
 		hobboy: '唱歌'
@@ -170,7 +170,7 @@ axios({
 ```js,ajax,demo,deleteUser
 axios({
 	method: 'delete',
-	url: '%{origin}%/api/ajax/deleteUser',
+	url: '%{origin}%/api/ajax/user/deleteUser',
 	params: {
 		id: '0cd22700f63a42e18d5829766d60bcb2'
 	}
@@ -194,7 +194,7 @@ axios({
     console.log(data)
   }
 </script>
-<script src="%{origin}%/api/ajax/getList?name=张三&callback=fn"></script>
+<script src="%{origin}%/api/ajax/user/getList?name=张三&callback=fn"></script>
 ```
 
 ### getUser
@@ -205,7 +205,7 @@ axios({
     console.log(data)
   }
 </script>
-<script src="%{origin}%/api/ajax/getUser?id=0cd22700f63a42e18d5829766d60bcb2&callback=fn"></script>
+<script src="%{origin}%/api/ajax/user/getUser?id=0cd22700f63a42e18d5829766d60bcb2&callback=fn"></script>
 ```
 
 ### searchList
@@ -216,5 +216,36 @@ axios({
     console.log(data)
   }
 </script>
-<script src="%{origin}%/api/ajax/searchList?value=test&callback=fn"></script>
+<script src="%{origin}%/api/ajax/user/searchList?value=test&callback=fn"></script>
+```
+
+## PROXY
+
+### 跨域代理
+
+```js,proxy,demo,跨域代理
+axios({
+  url: '/proxy/%{origin}%/api/ajax/user/getList',
+  method: 'get',
+  params: {
+		name: '坤',
+		hobby: '球'
+	}
+})
+```
+
+```js,proxy,response,跨域代理
+{
+  "code": 200,
+  "data": [
+    {
+      "id": "4ef33d1747a74678967b12537e5900bd",
+      "name": "蔡徐坤",
+      "age": 24,
+      "hobby": "唱、跳、Rap、篮球",
+      "createdTime": 1673214081611,
+      "updatedTime": 1673214081611
+    }
+  ]
+}
 ```

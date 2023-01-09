@@ -2,12 +2,13 @@
  * @Author: iuukai
  * @Date: 2023-01-09 00:51:47
  * @LastEditors: iuukai
- * @LastEditTime: 2023-01-09 05:43:20
+ * @LastEditTime: 2023-01-09 17:05:58
  * @FilePath: \api-test\index.js
  * @Description:
  * @QQ/微信: 790331286
  */
 const path = require('path')
+const axios = require('axios')
 const express = require('express')
 
 const app = express()
@@ -19,6 +20,29 @@ app.use(express.static('./'))
 app.listen(port, host, () =>
 	console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
 )
+
+app.use('/proxy/:url(*)', async (req, res) => {
+	try {
+		const { url } = req.params
+		const moduleResponse = await axios({
+			url,
+			method: req.method,
+			data: req.body,
+			params: req.query
+		})
+		res.status(moduleResponse.status).send(moduleResponse.data)
+	} catch (moduleResponse) {
+		if (!moduleResponse) {
+			res.status(404).send({
+				code: 404,
+				data: null,
+				msg: 'Not Found'
+			})
+			return
+		}
+		res.status(moduleResponse.status).send(moduleResponse.body)
+	}
+})
 
 app.use('/api/:type(ajax|jsonp)/:apiModule/:apiFunction?', async (req, res) => {
 	try {
