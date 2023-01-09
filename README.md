@@ -225,7 +225,7 @@ axios({
 
 ```js,proxy,demo,跨域代理
 axios({
-  url: '/proxy/%{origin}%/api/ajax/user/getList',
+  url: '%{origin}%/proxy/%{origin}%/api/ajax/user/getList',
   method: 'get',
   params: {
 		name: '坤',
