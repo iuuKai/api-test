@@ -1,0 +1,421 @@
+<!--
+ * @Author: iuukai
+ * @Date: 2023-01-09 00:54:43
+ * @LastEditors: iuukai
+ * @LastEditTime: 2023-01-09 15:23:23
+ * @FilePath: \api-test\index.html
+ * @Description: 
+ * @QQ/微信: 790331286
+-->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link
+			href="https://cdn.jsdelivr.net/npm/ant-design-vue@3.2.13/dist/antd.min.css"
+			rel="stylesheet"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.css"
+		/>
+		<!-- <link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"
+		/> -->
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-coy.min.css"
+		/>
+		<style>
+			/* 用于隐藏尚未完成编译的 DOM 模板 */
+			[v-cloak] {
+				display: none;
+			}
+
+			.no-margin {
+				margin: 0 !important;
+			}
+
+			.layout {
+			}
+
+			.layout-header {
+				text-align: center;
+			}
+
+			.layout-header .ant-typography {
+				color: white;
+				text-align: center;
+			}
+
+			.layout-content {
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+
+			.api_details {
+				padding-left: 20px;
+			}
+
+			.code_box {
+				position: relative;
+			}
+
+			.code_copyable {
+				position: absolute;
+				right: 10px;
+				top: 10px;
+				z-index: 2;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app" v-cloak>
+			<a-layout class="layout">
+				<!-- 头 -->
+				<a-affix :offset-top="0">
+					<a-layout-header class="layout-header">
+						<a-space :style="{ marginTop: '7px' }">
+							<a-typography-title :level="1">{{ title }}</a-typography-title>
+							<a-typography-text strong>Express & Vue3</a-typography-text>
+						</a-space>
+					</a-layout-header>
+				</a-affix>
+				<!-- 身 -->
+				<a-layout-content ref="$elContent" class="layout-content">
+					<a-row type="flex">
+						<a-col :span="4" :style="{ background: 'white' }">
+							<a-anchor :offset-top="asideFixed">
+								<loop-anchor-link :list="anchors"></loop-anchor-link>
+							</a-anchor>
+						</a-col>
+						<a-col :span="20">
+							<a-space direction="vertical" :style="{ width: '100%' }">
+								<template v-for="item in apiList" :key="item.type">
+									<a-card class="group_wrap">
+										<a-space>
+											<a-typography-title :id="item.type" :level="2">
+												{{ toUpper(item.type) }}
+											</a-typography-title>
+											<a-typography-text v-if="item.type === 'jsonp'" type="danger">
+												由于数据安全问题，JSONP 仅支持 GET，获取数据
+											</a-typography-text>
+										</a-space>
+										<div class="api_details" v-for="(sItem, sI) in item.children" :key="sItem.name">
+											<a-space direction="vertical" :size="10">
+												<a-space>
+													<a-typography-title
+														:id="`${item.type}_${sItem.name}`"
+														class="no-margin"
+														:level="4"
+													>
+														{{ sItem.name }}
+													</a-typography-title>
+													<a-typography-paragraph class="no-margin" copyable>
+														<a-typography-text code>{{ origin + sItem.api }}</a-typography-text>
+													</a-typography-paragraph>
+												</a-space>
+												<div>
+													<a-typography-text>method：</a-typography-text>
+													<a-tag
+														:color="sItem.method === 'get'
+														? 'green' : sItem.method === 'post'
+														? 'blue' : sItem.method === 'delete'
+														? 'red' : sItem.method === 'put'
+														? 'orange' : 'purple'"
+													>
+														{{ toUpper(sItem.method) }}
+													</a-tag>
+												</div>
+												<div>
+													<a-typography-text>字段：</a-typography-text>
+													<a-tag v-for="tag in sItem.params" :key="tag">
+														{{ tag.key }}
+														<a-badge v-if="tag.required" color="red" :offset="[5]" />
+													</a-tag>
+												</div>
+												<a-typography-text type="secondary">
+													描述：{{ sItem.description }}
+												</a-typography-text>
+												<div v-if="codes?.[item.type]?.[sItem.name]?.demo" class="demo_wrap">
+													<a-typography-text strong>Demo：</a-typography-text>
+													<div class="code_box" v-append-node="codes[item.type][sItem.name].demo">
+														<a-typography-paragraph
+															class="code_copyable"
+															v-if="codes?.[item.type]?.[sItem.name]?.demo"
+															:copyable="{ text: codes[item.type][sItem.name].demo.textContent }"
+														></a-typography-paragraph>
+													</div>
+												</div>
+												<div
+													v-if="codes?.[item.type]?.[sItem.name]?.response"
+													class="response_wrap"
+												>
+													<a-typography-text strong>Response：</a-typography-text>
+													<div
+														class="code_box"
+														v-append-node="codes[item.type][sItem.name].response"
+													>
+														<a-typography-paragraph
+															class="code_copyable"
+															v-if="codes?.[item.type]?.[sItem.name]?.response"
+															:copyable="{ text: codes[item.type][sItem.name].response.textContent }"
+														></a-typography-paragraph>
+													</div>
+												</div>
+											</a-space>
+											<a-divider
+												v-if="item.children.length > 1 && sI !== item.children.length - 1"
+											/>
+										</div>
+									</a-card>
+								</template>
+							</a-space>
+						</a-col>
+					</a-row>
+				</a-layout-content>
+				<!-- 尾 -->
+				<a-layout-footer class="layout-footer">
+					<a-row type="flex" justify="center">
+						<a-typography-text v-html="copyright"></a-typography-text>
+					</a-row>
+				</a-layout-footer>
+			</a-layout>
+			<a-back-top />
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/vue@3.2.41/dist/vue.global.prod.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.5/dayjs.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.5/plugin/advancedFormat.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.5/plugin/customParseFormat.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.5/plugin/localeData.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.5/plugin/weekOfYear.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.5/plugin/weekYear.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.5/plugin/weekday.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/ant-design-vue@3.2.13/dist/antd.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/axios@1.1.3/dist/axios.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/qs@6.10.5/dist/qs.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/marked@4.2.5/lib/marked.umd.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/line-numbers/prism-line-numbers.min.js"></script>
+		<script>
+			// 作用域空间
+			;(function () {
+				const { createApp, component, reactive, toRefs, computed, defineComponent } = Vue
+				const { toUpper } = _
+
+				const app = createApp({
+					directives: {
+						appendNode: {
+							mounted(el, binding, vNode, prevNode) {
+								binding.value && el.append(binding.value)
+							}
+						}
+					},
+					setup() {
+						const title = 'API-TEST'
+						const copyright = '©2023 <a href="https://github.com/iuukai">iuukai</a>'
+
+						const state = reactive({
+							codes: null,
+							anchors: computed(() =>
+								$(state.$elContent?.$el)
+									.find(':header')
+									.toArray()
+									.sort((a, b) => a.nodeName.localeCompare(b.nodeName))
+									.reduce((res, cur, i) => {
+										const arr = cur.id.split('_')
+										const parent = arr[arr.length - 2]
+										// 当前title前缀，是否找到，找到为父
+										const isFind = res.find(item => item.title.split('_')[0] === parent)
+										const item = { href: '#' + cur.id, title: arr[arr.length - 1] }
+										isFind ? isFind.children.push(item) : res.push({ ...item, children: [] })
+										return res
+									}, [])
+							),
+							origin: computed(() => location.origin),
+							$elContent: null,
+							asideFixed: computed(() => state.$elContent?.$el?.offsetTop + 10 ?? 0),
+							apiList: [
+								{
+									type: 'ajax',
+									children: [
+										{
+											name: 'getList',
+											api: '/api/ajax/getList',
+											method: 'get',
+											description: '获取用户列表，可传字段值进行模糊筛选',
+											params: [
+												{ key: 'name', required: false },
+												{ key: 'age', required: false },
+												{ key: 'hobby', required: false }
+											],
+											demo: null,
+											response: null
+										},
+										{
+											name: 'getUser',
+											api: '/api/ajax/getUser',
+											method: 'get',
+											description: '获取某个用户',
+											params: [{ key: 'id', required: true }],
+											demo: null,
+											response: null
+										},
+										{
+											name: 'searchList',
+											api: '/api/ajax/searchList',
+											method: 'get',
+											description: '根据关键字模糊搜索用户列表',
+											params: [{ key: 'value', required: false }],
+											demo: null,
+											response: null
+										},
+										{
+											name: 'addUser',
+											api: '/api/ajax/addUser',
+											method: 'post',
+											description: '添加用户',
+											params: [
+												{ key: 'name', required: true },
+												{ key: 'age', required: false },
+												{ key: 'hobby', required: false }
+											],
+											demo: null,
+											response: null
+										},
+										{
+											name: 'updateUser',
+											api: '/api/ajax/updateUser',
+											method: 'put',
+											description: '编辑用户',
+											params: [
+												{ key: 'age', required: false },
+												{ key: 'hobby', required: false }
+											],
+											demo: null,
+											response: null
+										},
+										{
+											name: 'deleteUser',
+											api: '/api/ajax/deleteUser',
+											method: 'delete',
+											description: '删除用户',
+											params: [{ key: 'id', required: true }],
+											demo: null,
+											response: null
+										}
+									]
+								},
+								{
+									type: 'jsonp',
+									children: [
+										{
+											name: 'getList',
+											api: '/api/ajax/getList?name=[name]&age=[age]&hobbt=[hobby]&callback=[functionName]',
+											method: 'jsonp',
+											description: '获取用户列表，可传字段值进行模糊筛选',
+											params: [
+												{ key: 'name', required: false },
+												{ key: 'age', required: false },
+												{ key: 'hobby', required: false }
+											],
+											demo: null,
+											response: null
+										},
+										{
+											name: 'getUser',
+											api: '/api/ajax/getUser?id=[id]&callback=[functionName]',
+											method: 'jsonp',
+											description: '获取某个用户',
+											params: [{ key: 'id', required: true }],
+											demo: null,
+											response: null
+										},
+										{
+											name: 'searchList',
+											api: '/api/ajax/searchList?value=[value]&callback=[functionName]',
+											method: 'jsonp',
+											description: '根据关键字模糊搜索用户列表',
+											params: [{ key: 'value', required: false }],
+											demo: null,
+											response: null
+										}
+									]
+								}
+							]
+						})
+
+						getReadMe()
+						async function getReadMe() {
+							const { data } = await axios.get('./README.md')
+							const wrap = document.createElement('div')
+							$(wrap).html(marked.parse(data).replaceAll('%{origin}%', state.origin))
+							state.codes = $(wrap)
+								.find('pre')
+								.toArray()
+								.reduce((res, cur, i) => {
+									const code = $(cur).find('code')
+									const classList = $(code).attr('class').split(',')
+									const className = classList.shift()
+									$(code).attr('class', className)
+									$(cur).attr('class', className)
+									$(cur).addClass('line-numbers')
+									const type = classList[0]
+									const mode = classList[1]
+									const name = classList[classList.length - 1]
+									if (res[type]) {
+										if (res[type][name]) {
+											res[type][name][mode] = cur
+										} else {
+											res[type][name] = {
+												[mode]: cur
+											}
+										}
+									} else {
+										res[type] = {
+											[name]: { [mode]: cur }
+										}
+									}
+									return res
+								}, {})
+						}
+						return {
+							toUpper,
+							title,
+							copyright,
+							...toRefs(state)
+						}
+					}
+				})
+
+				// 递归组件
+				app.component('loop-anchor-link', {
+					props: {
+						list: {
+							type: Array,
+							default: () => []
+						}
+					},
+					template: `
+							<a-anchor-link
+								v-for="item in list"
+								:key="item.href"
+								:href="item.href"
+								:title="item.title"
+							>
+								<loop-anchor-link :list="item.children" />
+							</a-anchor-link>`
+				})
+
+				app.use(antd)
+				app.mount('#app')
+			})()
+		</script>
+	</body>
+</html>
