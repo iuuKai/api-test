@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-01-09 01:12:25
  * @LastEditors: iuukai
- * @LastEditTime: 2023-01-09 17:06:04
+ * @LastEditTime: 2023-01-09 18:29:45
  * @FilePath: \api-test\ajax\user.js
  * @Description:
  * @QQ/微信: 790331286
@@ -107,12 +107,17 @@ const api = {
 	put: {
 		// 更新用户
 		async updateUser(query) {
+			console.log(query)
 			const { id, name, age, hobby } = query
 			if (!id) throw { code: 403, msg: '缺少id' }
 			const list = await readData()
 			const item = list.find(item => item.id === id)
 			if (!item) throw { code: 404, msg: '数据丢失，更新失败' }
 			if (name && item.name !== name) throw { code: 403, msg: '该字段不可修改' }
+			console.log(!age && !hobby)
+			console.log(item.age === (age ?? 0) && item.hobby === (hobby ?? ''))
+			console.log(!age && item.hobby === (hobby ?? ''))
+			console.log(!hobby && item.age === (age ?? 0))
 			if (
 				(!age && !hobby) ||
 				(item.age === (age ?? 0) && item.hobby === (hobby ?? '')) ||

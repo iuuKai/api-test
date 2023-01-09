@@ -116,10 +116,10 @@ axios({
 axios({
 	method: 'post',
 	url: '%{origin}%/api/ajax/user/addUser',
-	params: {
+	data: {
 		name: '赵四',
 		age: 51,
-		hobboy: '跳舞'
+		hobby: '跳舞'
 	}
 })
 ```
@@ -143,10 +143,10 @@ axios({
 ```js,ajax,demo,updateUser
 axios({
 	method: 'put',
-	url: '%{origin}%/api/ajax/user/addUser',
-	params: {
+	url: '%{origin}%/api/ajax/user/updateUser',
+	data: {
 		id: '0cd22700f63a42e18d5829766d60bcb2',
-		hobboy: '唱歌'
+		hobby: '唱歌'
 	}
 })
 ```
@@ -171,7 +171,7 @@ axios({
 axios({
 	method: 'delete',
 	url: '%{origin}%/api/ajax/user/deleteUser',
-	params: {
+	data: {
 		id: '0cd22700f63a42e18d5829766d60bcb2'
 	}
 })
