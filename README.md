@@ -6,13 +6,13 @@
 
 ```js,ajax,demo,getList
 axios({
-	method: 'get',
-	url: '%{origin}%/api/ajax/user/getList',
-	params: {
-		name: '',
-		age: '',
-		hobby: ''
-	}
+  method: 'get',
+  url: '%{origin}%/api/ajax/user/getList',
+  params: {
+    name: '',
+    age: '',
+    hobby: ''
+  }
 })
 ```
 
@@ -52,11 +52,11 @@ axios({
 
 ```js,ajax,demo,getUser
 axios({
-	method: 'get',
-	url: '%{origin}%/api/ajax/user/getUser',
-	params: {
-		id: '0cd22700f63a42e18d5829766d60bcb2'
-	}
+  method: 'get',
+  url: '%{origin}%/api/ajax/user/getUser',
+  params: {
+    id: '0cd22700f63a42e18d5829766d60bcb2'
+  }
 })
 ```
 
@@ -78,11 +78,11 @@ axios({
 
 ```js,ajax,demo,searchList
 axios({
-	method: 'get',
-	url: '%{origin}%/api/ajax/user/searchList',
-	params: {
-		value: '球'
-	}
+  method: 'get',
+  url: '%{origin}%/api/ajax/user/searchList',
+  params: {
+    value: '球'
+  }
 })
 ```
 
@@ -114,13 +114,13 @@ axios({
 
 ```js,ajax,demo,addUser
 axios({
-	method: 'post',
-	url: '%{origin}%/api/ajax/user/addUser',
-	data: {
-		name: '赵四',
-		age: 51,
-		hobby: '跳舞'
-	}
+  method: 'post',
+  url: '%{origin}%/api/ajax/user/addUser',
+  data: {
+    name: '赵四',
+    age: 51,
+    hobby: '跳舞'
+  }
 })
 ```
 
@@ -142,12 +142,12 @@ axios({
 
 ```js,ajax,demo,updateUser
 axios({
-	method: 'put',
-	url: '%{origin}%/api/ajax/user/updateUser',
-	data: {
-		id: '0cd22700f63a42e18d5829766d60bcb2',
-		hobby: '唱歌'
-	}
+  method: 'put',
+  url: '%{origin}%/api/ajax/user/updateUser',
+  data: {
+    id: '0cd22700f63a42e18d5829766d60bcb2',
+    hobby: '唱歌'
+  }
 })
 ```
 
@@ -169,11 +169,11 @@ axios({
 
 ```js,ajax,demo,deleteUser
 axios({
-	method: 'delete',
-	url: '%{origin}%/api/ajax/user/deleteUser',
-	data: {
-		id: '0cd22700f63a42e18d5829766d60bcb2'
-	}
+  method: 'delete',
+  url: '%{origin}%/api/ajax/user/deleteUser',
+  data: {
+    id: '0cd22700f63a42e18d5829766d60bcb2'
+  }
 })
 ```
 
@@ -228,9 +228,9 @@ axios({
   url: '%{origin}%/proxy/%{origin}%/api/ajax/user/getList',
   method: 'get',
   params: {
-		name: '坤',
-		hobby: '球'
-	}
+    name: '坤',
+    hobby: '球'
+  }
 })
 ```
 
