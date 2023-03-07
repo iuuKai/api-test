@@ -2,7 +2,7 @@
  * @Author: iuukai
  * @Date: 2023-01-09 00:51:47
  * @LastEditors: iuukai
- * @LastEditTime: 2023-01-09 17:51:13
+ * @LastEditTime: 2023-03-08 07:23:01
  * @FilePath: \api-test\index.js
  * @Description:
  * @QQ/微信: 790331286
@@ -24,6 +24,7 @@ app.listen(port, host, () =>
 
 app.get('/readme', async (req, res) => {
 	try {
+		console.log(123)
 		const content = await fs.readFileSync(path.join(__dirname, './README.md'), 'utf8')
 		res.status(200).send({ code: 200, data: content })
 	} catch (err) {
@@ -38,6 +39,14 @@ app.get('/readme', async (req, res) => {
 app.use('/proxy/:url(*)', async (req, res) => {
 	try {
 		const { url } = req.params
+		res.set({
+			'Access-Control-Allow-Credentials': true,
+			'Access-Control-Allow-Origin': req.headers.origin || '*',
+			'Access-Control-Allow-Headers': 'X-Requested-With,Content-Type,Authorization',
+			'Access-Control-Allow-Methods': 'PUT,POST,GET,HEAD,PATCH,DELETE,OPTIONS',
+			'Content-Type': 'application/json; charset=utf-8'
+			// 'content-security-policy': 'default-src none'
+		})
 		const moduleResponse = await axios({
 			url,
 			method: req.method,
@@ -54,7 +63,7 @@ app.use('/proxy/:url(*)', async (req, res) => {
 			})
 			return
 		}
-		res.status(moduleResponse.status).send(moduleResponse.body)
+		res.status(moduleResponse.status ?? 502).send(moduleResponse.body)
 	}
 })
 
